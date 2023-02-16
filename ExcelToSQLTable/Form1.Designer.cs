@@ -30,13 +30,16 @@ namespace ExcelToSQLTable
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSelezionaFile = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button3 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnCopia = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnGeneraScript = new System.Windows.Forms.Button();
+            this.txtOutput = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -53,28 +56,31 @@ namespace ExcelToSQLTable
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.button1);
+            this.splitContainer1.Panel1.Controls.Add(this.comboBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.btnSelezionaFile);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.button3);
-            this.splitContainer1.Panel2.Controls.Add(this.textBox2);
-            this.splitContainer1.Panel2.Controls.Add(this.label1);
+            this.splitContainer1.Panel2.Controls.Add(this.button1);
+            this.splitContainer1.Panel2.Controls.Add(this.btnCopia);
+            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.btnGeneraScript);
+            this.splitContainer1.Panel2.Controls.Add(this.txtOutput);
             this.splitContainer1.Panel2.Controls.Add(this.textBox1);
             this.splitContainer1.Size = new System.Drawing.Size(1522, 1124);
             this.splitContainer1.SplitterDistance = 575;
             this.splitContainer1.TabIndex = 0;
             // 
-            // button1
+            // btnSelezionaFile
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(255, 34);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Seleziona il file";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSelezionaFile.Location = new System.Drawing.Point(12, 12);
+            this.btnSelezionaFile.Name = "btnSelezionaFile";
+            this.btnSelezionaFile.Size = new System.Drawing.Size(255, 34);
+            this.btnSelezionaFile.TabIndex = 1;
+            this.btnSelezionaFile.Text = "Seleziona il file";
+            this.btnSelezionaFile.UseVisualStyleBackColor = true;
+            this.btnSelezionaFile.Click += new System.EventHandler(this.button1_Click);
             // 
             // dataGridView1
             // 
@@ -89,34 +95,57 @@ namespace ExcelToSQLTable
             this.dataGridView1.Size = new System.Drawing.Size(1492, 520);
             this.dataGridView1.TabIndex = 0;
             // 
-            // button3
+            // button1
             // 
-            this.button3.Location = new System.Drawing.Point(261, 36);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(264, 34);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Genera script SQL";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.UseWaitCursor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button1.Location = new System.Drawing.Point(1419, 36);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(91, 34);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Svuota";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // textBox2
+            // btnCopia
             // 
-            this.textBox2.Location = new System.Drawing.Point(12, 76);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(1498, 457);
-            this.textBox2.TabIndex = 4;
+            this.btnCopia.Location = new System.Drawing.Point(1338, 36);
+            this.btnCopia.Name = "btnCopia";
+            this.btnCopia.Size = new System.Drawing.Size(75, 34);
+            this.btnCopia.TabIndex = 7;
+            this.btnCopia.Text = "Copia";
+            this.btnCopia.UseVisualStyleBackColor = true;
+            this.btnCopia.Click += new System.EventHandler(this.btnCopia_Click);
             // 
-            // label1
+            // label2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(118, 25);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Nome tabella";
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 11);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(868, 25);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Inserire un nome per la tabella temporanea (in caso il campo si lasciasse vuoto v" +
+    "errà preso di default #temp)";
+            // 
+            // btnGeneraScript
+            // 
+            this.btnGeneraScript.Location = new System.Drawing.Point(261, 36);
+            this.btnGeneraScript.Name = "btnGeneraScript";
+            this.btnGeneraScript.Size = new System.Drawing.Size(264, 34);
+            this.btnGeneraScript.TabIndex = 5;
+            this.btnGeneraScript.Text = "Genera script SQL";
+            this.btnGeneraScript.UseVisualStyleBackColor = true;
+            this.btnGeneraScript.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // txtOutput
+            // 
+            this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutput.Location = new System.Drawing.Point(12, 76);
+            this.txtOutput.Multiline = true;
+            this.txtOutput.Name = "txtOutput";
+            this.txtOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtOutput.Size = new System.Drawing.Size(1498, 457);
+            this.txtOutput.TabIndex = 4;
             // 
             // textBox1
             // 
@@ -129,6 +158,16 @@ namespace ExcelToSQLTable
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(273, 13);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(293, 33);
+            this.comboBox1.TabIndex = 2;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -152,13 +191,16 @@ namespace ExcelToSQLTable
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSelezionaFile;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox txtOutput;
+        private System.Windows.Forms.Button btnGeneraScript;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnCopia;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 
