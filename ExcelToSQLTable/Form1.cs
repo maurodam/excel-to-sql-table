@@ -17,51 +17,74 @@ namespace ExcelToSQLTable
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.Filter = "Excel Files|*.xlsx;*.xls";
-
-            DialogResult result = openFileDialog1.ShowDialog();
-
-            if (result == DialogResult.OK)
+            try
             {
-                Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-                excel.Visible = false;
+                openFileDialog1.Filter = "Excel Files|*.xlsx;*.xls";
 
-                Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
+                DialogResult result = openFileDialog1.ShowDialog();
 
-                Worksheet worksheet = workbook.Sheets[1];
-
-                Range range = worksheet.UsedRange;
-
-                DataTable dataTable = new DataTable();
-
-                for (int row = 1; row <= range.Rows.Count; row++)
+                if (result == DialogResult.OK)
                 {
-                    DataRow dataRow = dataTable.NewRow();
-                    for (int col = 1; col <= range.Columns.Count; col++)
+                    Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+
+                    excel.Visible = false;
+
+                    Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
+
+                    Worksheet worksheet = workbook.Sheets[1];
+
+                    Range range = worksheet.UsedRange;
+
+                    DataTable dataTable = new DataTable();
+
+                    for (int row = 1; row <= range.Rows.Count; row++)
                     {
-                        if (row == 1)
-                            dataTable.Columns.Add(range.Cells[row, col].Value2.ToString());
-                        else
-                            dataRow[col - 1] = range.Cells[row, col].Value2;
+                        DataRow dataRow = dataTable.NewRow();
+                        for (int col = 1; col <= range.Columns.Count; col++)
+                        {
+                            if (row == 1)
+                                dataTable.Columns.Add(range.Cells[row, col].Value2.ToString());
+                            else
+                                dataRow[col - 1] = range.Cells[row, col].Value2;
+                        }
+                        if (row != 1)
+                            dataTable.Rows.Add(dataRow);
                     }
-                    if (row != 1)
-                        dataTable.Rows.Add(dataRow);
+
+                    workbook.Close(false);
+                    excel.Quit();
+
+                    dataGridView1.DataSource = dataTable;
+                    FillCheckListBox();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Il file non è valido. Errore: " + ex.ToString());
+                return;
+            }
+            MessageBox.Show("File caricato.");
+        }
 
-                workbook.Close(false);
-                excel.Quit();
-
-                dataGridView1.DataSource = dataTable;
-
-                MessageBox.Show("File caricato.");
+        void FillCheckListBox()
+        {
+            checkedListBox1.Items.Clear();
+            foreach (DataGridViewColumn col in dataGridView1.Columns)
+            {
+                checkedListBox1.Items.Add(col.Name);
             }
         }
 
         private String CreateTable(string tableName)
         {
+            if (checkedListBox1.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("Seleziona almeno una colonna.", "Error");
+                return null;
+            }
+
             DataTable dataTable = new DataTable(dataGridView1.Name);
 
             foreach (DataGridViewColumn dataGridViewColumn in dataGridView1.Columns)
@@ -69,7 +92,10 @@ namespace ExcelToSQLTable
                 dataTable.Columns.Add(dataGridViewColumn.Name);
             }
 
-            var columnNames = string.Join(", ", dataTable.Columns.Cast<DataColumn>().Select(c => $"[{c.ColumnName}] NVARCHAR(MAX)"));
+            var checkedColumns = checkedListBox1.CheckedItems.Cast<string>();
+            var columnNames = string.Join(", ", dataTable.Columns.Cast<DataColumn>()
+                                            .Where(c => checkedColumns.Contains(c.ColumnName))
+                                            .Select(c => $"[{c.ColumnName}] NVARCHAR(MAX)"));
             var createTableScript = $"CREATE TABLE {tableName} ({columnNames})";
 
             return createTableScript;
@@ -81,16 +107,28 @@ namespace ExcelToSQLTable
             var tableName = string.IsNullOrEmpty(textBox1.Text.Trim()) ? "#temp" : textBox1.Text.Trim();
 
             DataTable dataTable = new DataTable(dataGridView1.Name);
-            foreach (DataGridViewColumn column in dataGridView1.Columns)
+
+            foreach (var item in checkedListBox1.CheckedItems)
             {
-                dataTable.Columns.Add(column.Name);
+                DataGridViewColumn column = dataGridView1.Columns.Cast<DataGridViewColumn>().FirstOrDefault(c => c.Name == item.ToString());
+                if (column != null)
+                {
+                    dataTable.Columns.Add(column.Name);
+                }
             }
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                object[] rowData = new object[row.Cells.Count];
-                for (int i = 0; i < row.Cells.Count; i++)
+                object[] rowData = new object[dataTable.Columns.Count];
+                int i = 0;
+                foreach (DataColumn column in dataTable.Columns)
                 {
-                    rowData[i] = row.Cells[i].Value;
+                    DataGridViewCell cell = row.Cells.Cast<DataGridViewCell>().FirstOrDefault(c => c.OwningColumn.Name == column.ColumnName);
+                    if (cell != null)
+                    {
+                        rowData[i] = cell.Value;
+                    }
+                    i++;
                 }
                 dataTable.Rows.Add(rowData);
             }
@@ -135,6 +173,7 @@ namespace ExcelToSQLTable
         private void Form1_Load(object sender, EventArgs e)
         {
             txtOutput.Text = "";
+            checkedListBox1.Items.Clear();
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -151,5 +190,14 @@ namespace ExcelToSQLTable
         {
             //TO DO: aggiungere selezione foglio in caso di fogli multipli in Excel
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            for (var i = 0; i <= checkedListBox1.Items.Count-1; i++)
+            {
+                checkedListBox1.SetItemChecked(i, true);
+            }
+        }
+
     }
 }
