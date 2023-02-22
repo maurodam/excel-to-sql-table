@@ -55,9 +55,9 @@ namespace ExcelToSQLTable
                 excel.Quit();
 
                 dataGridView1.DataSource = dataTable;
-            }
 
-            MessageBox.Show("File caricato.");
+                MessageBox.Show("File caricato.");
+            }
         }
 
         private String CreateTable(string tableName)
@@ -113,7 +113,18 @@ namespace ExcelToSQLTable
                 sqlOutput += sqlQuery;
             }
 
-            txtOutput.Text = CreateTable(tableName) + Environment.NewLine + Environment.NewLine + sqlOutput;
+            if (checkBox1.Checked)
+                sqlOutput = "BEGIN TRAN test" +
+                    Environment.NewLine + Environment.NewLine +
+                    CreateTable(tableName) +
+                    Environment.NewLine + Environment.NewLine +
+                    sqlOutput +
+                    Environment.NewLine + Environment.NewLine +
+                    "ROLLBACK TRAN test";
+            else
+                sqlOutput = CreateTable(tableName) + Environment.NewLine + Environment.NewLine + sqlOutput;
+
+            txtOutput.Text = sqlOutput;
         }
 
         private void button3_Click(object sender, EventArgs e)
