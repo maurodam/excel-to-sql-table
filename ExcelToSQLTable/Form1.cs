@@ -151,16 +151,13 @@ namespace ExcelToSQLTable
                 sqlOutput += sqlQuery;
             }
 
-            if (checkBox1.Checked)
-                sqlOutput = "BEGIN TRAN test" +
-                    Environment.NewLine + Environment.NewLine +
+                sqlOutput = (chkTran.Checked ? $"BEGIN TRAN test{Environment.NewLine}{Environment.NewLine}" : "") +
                     CreateTable(tableName) +
                     Environment.NewLine + Environment.NewLine +
                     sqlOutput +
                     Environment.NewLine + Environment.NewLine +
-                    "ROLLBACK TRAN test";
-            else
-                sqlOutput = CreateTable(tableName) + Environment.NewLine + Environment.NewLine + sqlOutput;
+                    (chkSelect.Checked ? $"SELECT * FROM {tableName}{Environment.NewLine}{Environment.NewLine}" : "") +
+                    (chkTran.Checked ? "ROLLBACK TRAN test" : "");
 
             txtOutput.Text = sqlOutput;
         }
