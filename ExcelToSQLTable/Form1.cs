@@ -163,14 +163,15 @@ namespace ExcelToSQLTable
 
                 sqlOutput += sqlQuery;
             }
-
+            
                 sqlOutput = (chkTran.Checked ? $"BEGIN TRAN test{Environment.NewLine}{Environment.NewLine}" : "") +
-                    CreateTable(tableName) +
-                    Environment.NewLine + Environment.NewLine +
-                    sqlOutput +
-                    Environment.NewLine + Environment.NewLine +
-                    (chkSelect.Checked ? $"SELECT * FROM {tableName}{Environment.NewLine}{Environment.NewLine}" : "") +
-                    (chkTran.Checked ? "ROLLBACK TRAN test" : "");
+                            (chkDrop.Checked ? $"IF(OBJECT_ID('TEMPDB..{tableName}', 'U') IS NOT NULL) DROP TABLE {tableName}{ Environment.NewLine}" : "") +
+                            CreateTable(tableName) +
+                            Environment.NewLine + Environment.NewLine +
+                            sqlOutput +
+                            Environment.NewLine + Environment.NewLine +
+                            (chkSelect.Checked ? $"SELECT * FROM {tableName}{Environment.NewLine}{Environment.NewLine}" : "") +
+                            (chkTran.Checked ? "ROLLBACK TRAN test" : "");
 
             txtOutput.Text = sqlOutput;
         }

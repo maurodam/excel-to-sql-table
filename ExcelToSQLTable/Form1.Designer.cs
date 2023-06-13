@@ -46,6 +46,7 @@ namespace ExcelToSQLTable
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.chkDrop = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -151,6 +152,7 @@ namespace ExcelToSQLTable
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkDrop);
             this.groupBox1.Controls.Add(this.chkTran);
             this.groupBox1.Controls.Add(this.chkSelect);
             this.groupBox1.Location = new System.Drawing.Point(886, 3);
@@ -167,9 +169,9 @@ namespace ExcelToSQLTable
             this.chkTran.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkTran.Location = new System.Drawing.Point(6, 30);
             this.chkTran.Name = "chkTran";
-            this.chkTran.Size = new System.Drawing.Size(185, 29);
+            this.chkTran.Size = new System.Drawing.Size(129, 29);
             this.chkTran.TabIndex = 9;
-            this.chkTran.Text = "Includi transazione";
+            this.chkTran.Text = "Transazione";
             this.chkTran.UseVisualStyleBackColor = true;
             // 
             // chkSelect
@@ -177,11 +179,11 @@ namespace ExcelToSQLTable
             this.chkSelect.AutoSize = true;
             this.chkSelect.Checked = true;
             this.chkSelect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSelect.Location = new System.Drawing.Point(197, 30);
+            this.chkSelect.Location = new System.Drawing.Point(132, 30);
             this.chkSelect.Name = "chkSelect";
-            this.chkSelect.Size = new System.Drawing.Size(139, 29);
+            this.chkSelect.Size = new System.Drawing.Size(84, 29);
             this.chkSelect.TabIndex = 10;
-            this.chkSelect.Text = "Includi select";
+            this.chkSelect.Text = "Select";
             this.chkSelect.UseVisualStyleBackColor = true;
             // 
             // button1
@@ -248,6 +250,18 @@ namespace ExcelToSQLTable
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // chkDrop
+            // 
+            this.chkDrop.AutoSize = true;
+            this.chkDrop.Checked = true;
+            this.chkDrop.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDrop.Location = new System.Drawing.Point(222, 30);
+            this.chkDrop.Name = "chkDrop";
+            this.chkDrop.Size = new System.Drawing.Size(123, 29);
+            this.chkDrop.TabIndex = 11;
+            this.chkDrop.Text = "Drop table";
+            this.chkDrop.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -290,6 +304,7 @@ namespace ExcelToSQLTable
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.CheckBox chkSelect;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox chkDrop;
     }
 }
 
