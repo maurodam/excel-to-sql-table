@@ -11,6 +11,7 @@ namespace ExcelToSQLTable
     public partial class Form1 : Form
     {
         private Workbook workbook;
+        Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
 
         public Form1()
         {
@@ -29,8 +30,6 @@ namespace ExcelToSQLTable
 
                 if (result == DialogResult.OK)
                 {
-                    Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
-
                     excel.Visible = false;
 
                     workbook = excel.Workbooks.Open(openFileDialog1.FileName);
@@ -55,9 +54,6 @@ namespace ExcelToSQLTable
                             dataTable.Rows.Add(dataRow);
                     }
                     FillComboBox(workbook);
-
-                    //workbook.Close(false);
-                    //excel.Quit();
 
                     dataGridView1.DataSource = dataTable;
                     FillCheckListBox();
@@ -245,5 +241,10 @@ namespace ExcelToSQLTable
             }
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+                workbook?.Close(false);
+                excel?.Quit();
+        }
     }
 }

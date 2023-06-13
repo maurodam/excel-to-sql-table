@@ -36,8 +36,9 @@ namespace ExcelToSQLTable
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.btnSelezionaFile = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.chkSelect = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkTran = new System.Windows.Forms.CheckBox();
+            this.chkSelect = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.btnCopia = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -45,7 +46,6 @@ namespace ExcelToSQLTable
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -149,17 +149,16 @@ namespace ExcelToSQLTable
             this.dataGridView1.Size = new System.Drawing.Size(1287, 520);
             this.dataGridView1.TabIndex = 0;
             // 
-            // chkSelect
+            // groupBox1
             // 
-            this.chkSelect.AutoSize = true;
-            this.chkSelect.Checked = true;
-            this.chkSelect.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSelect.Location = new System.Drawing.Point(197, 30);
-            this.chkSelect.Name = "chkSelect";
-            this.chkSelect.Size = new System.Drawing.Size(139, 29);
-            this.chkSelect.TabIndex = 10;
-            this.chkSelect.Text = "Includi select";
-            this.chkSelect.UseVisualStyleBackColor = true;
+            this.groupBox1.Controls.Add(this.chkTran);
+            this.groupBox1.Controls.Add(this.chkSelect);
+            this.groupBox1.Location = new System.Drawing.Point(886, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(446, 67);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Opzioni";
             // 
             // chkTran
             // 
@@ -172,6 +171,18 @@ namespace ExcelToSQLTable
             this.chkTran.TabIndex = 9;
             this.chkTran.Text = "Includi transazione";
             this.chkTran.UseVisualStyleBackColor = true;
+            // 
+            // chkSelect
+            // 
+            this.chkSelect.AutoSize = true;
+            this.chkSelect.Checked = true;
+            this.chkSelect.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSelect.Location = new System.Drawing.Point(197, 30);
+            this.chkSelect.Name = "chkSelect";
+            this.chkSelect.Size = new System.Drawing.Size(139, 29);
+            this.chkSelect.TabIndex = 10;
+            this.chkSelect.Text = "Includi select";
+            this.chkSelect.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
@@ -237,17 +248,6 @@ namespace ExcelToSQLTable
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.chkTran);
-            this.groupBox1.Controls.Add(this.chkSelect);
-            this.groupBox1.Location = new System.Drawing.Point(886, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(446, 67);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Opzioni";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -256,6 +256,7 @@ namespace ExcelToSQLTable
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Excel columns to SQL temp table";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
