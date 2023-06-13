@@ -10,6 +10,8 @@ namespace ExcelToSQLTable
 {
     public partial class Form1 : Form
     {
+        private Workbook workbook;
+
         public Form1()
         {
             InitializeComponent();
@@ -31,7 +33,7 @@ namespace ExcelToSQLTable
 
                     excel.Visible = false;
 
-                    Workbook workbook = excel.Workbooks.Open(openFileDialog1.FileName);
+                    workbook = excel.Workbooks.Open(openFileDialog1.FileName);
 
                     Worksheet worksheet = workbook.Sheets[1];
 
@@ -52,9 +54,10 @@ namespace ExcelToSQLTable
                         if (row != 1)
                             dataTable.Rows.Add(dataRow);
                     }
+                    FillComboBox(workbook);
 
-                    workbook.Close(false);
-                    excel.Quit();
+                    //workbook.Close(false);
+                    //excel.Quit();
 
                     dataGridView1.DataSource = dataTable;
                     FillCheckListBox();
@@ -74,6 +77,20 @@ namespace ExcelToSQLTable
             foreach (DataGridViewColumn col in dataGridView1.Columns)
             {
                 checkedListBox1.Items.Add(col.Name);
+            }
+        }
+
+        private void FillComboBox(Workbook workbook)
+        {
+            comboBox1.Items.Clear();
+            foreach (Worksheet sheet in workbook.Sheets)
+            {
+                comboBox1.Items.Add(sheet.Name);
+            }
+
+            if (comboBox1.Items.Count > 0)
+            {
+                comboBox1.SelectedIndex = 0;
             }
         }
 
@@ -186,6 +203,38 @@ namespace ExcelToSQLTable
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             //TO DO: aggiungere selezione foglio in caso di fogli multipli in Excel
+            string selectedSheetName = comboBox1.SelectedItem.ToString();
+            Worksheet selectedSheet = workbook.Sheets[selectedSheetName];
+
+            Range range = selectedSheet.UsedRange;
+            DataTable dataTable = new DataTable();
+
+            for (int col = 1; col <= range.Columns.Count; col++)
+            {
+                dataTable.Columns.Add(range.Cells[1, col].Value2.ToString());
+            }
+
+            for (int row = 2; row <= range.Rows.Count; row++)
+            {
+                DataRow dataRow = dataTable.NewRow();
+                for (int col = 1; col <= range.Columns.Count; col++)
+                {
+                    dataRow[col - 1] = range.Cells[row, col].Value2;
+                }
+                dataTable.Rows.Add(dataRow);
+            }
+
+            dataGridView1.DataSource = dataTable;
+            FillCheckListBox(dataTable);
+        }
+
+        private void FillCheckListBox(DataTable dataTable)
+        {
+            checkedListBox1.Items.Clear();
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                checkedListBox1.Items.Add(column.ColumnName);
+            }
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
