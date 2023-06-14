@@ -64,7 +64,6 @@ namespace ExcelToSQLTable
                 MessageBox.Show("Il file non è valido. Errore: " + ex.ToString());
                 return;
             }
-            MessageBox.Show("File caricato.");
         }
 
         void FillCheckListBox()
@@ -163,7 +162,10 @@ namespace ExcelToSQLTable
 
                 sqlOutput += sqlQuery;
             }
-            
+
+            if (CreateTable(tableName) == null)
+                return;
+
                 sqlOutput = (chkTran.Checked ? $"BEGIN TRAN test{Environment.NewLine}{Environment.NewLine}" : "") +
                             (chkDrop.Checked ? $"IF(OBJECT_ID('TEMPDB..{tableName}', 'U') IS NOT NULL) DROP TABLE {tableName}{ Environment.NewLine}" : "") +
                             CreateTable(tableName) +
@@ -200,29 +202,37 @@ namespace ExcelToSQLTable
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             //TO DO: aggiungere selezione foglio in caso di fogli multipli in Excel
-            string selectedSheetName = comboBox1.SelectedItem.ToString();
-            Worksheet selectedSheet = workbook.Sheets[selectedSheetName];
-
-            Range range = selectedSheet.UsedRange;
-            DataTable dataTable = new DataTable();
-
-            for (int col = 1; col <= range.Columns.Count; col++)
+            try
             {
-                dataTable.Columns.Add(range.Cells[1, col].Value2.ToString());
-            }
+                string selectedSheetName = comboBox1.SelectedItem.ToString();
+                Worksheet selectedSheet = workbook.Sheets[selectedSheetName];
 
-            for (int row = 2; row <= range.Rows.Count; row++)
-            {
-                DataRow dataRow = dataTable.NewRow();
+                Range range = selectedSheet.UsedRange;
+                DataTable dataTable = new DataTable();
+
                 for (int col = 1; col <= range.Columns.Count; col++)
                 {
-                    dataRow[col - 1] = range.Cells[row, col].Value2;
+                    dataTable.Columns.Add(range.Cells[1, col].Value2.ToString());
                 }
-                dataTable.Rows.Add(dataRow);
-            }
 
-            dataGridView1.DataSource = dataTable;
-            FillCheckListBox(dataTable);
+                for (int row = 2; row <= range.Rows.Count; row++)
+                {
+                    DataRow dataRow = dataTable.NewRow();
+                    for (int col = 1; col <= range.Columns.Count; col++)
+                    {
+                        dataRow[col - 1] = range.Cells[row, col].Value2;
+                    }
+                    dataTable.Rows.Add(dataRow);
+                }
+
+                dataGridView1.DataSource = dataTable;
+                FillCheckListBox(dataTable);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Errore: " + ex.ToString());
+                return;
+            }
         }
 
         private void FillCheckListBox(DataTable dataTable)
