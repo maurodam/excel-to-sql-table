@@ -196,7 +196,8 @@ namespace ExcelToSQLTable
 
         private void btnCopia_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(txtOutput.Text);
+            if(txtOutput.Text.Trim() != "")
+                Clipboard.SetText(txtOutput.Text);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
