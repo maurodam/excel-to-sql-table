@@ -166,14 +166,14 @@ namespace ExcelToSQLTable
             if (CreateTable(tableName) == null)
                 return;
 
-                sqlOutput = (chkTran.Checked ? $"BEGIN TRAN test{Environment.NewLine}{Environment.NewLine}" : "") +
-                            (chkDrop.Checked ? $"IF(OBJECT_ID('TEMPDB..{tableName}', 'U') IS NOT NULL) DROP TABLE {tableName}{ Environment.NewLine}" : "") +
-                            CreateTable(tableName) +
-                            Environment.NewLine + Environment.NewLine +
-                            sqlOutput +
-                            Environment.NewLine + Environment.NewLine +
-                            (chkSelect.Checked ? $"SELECT * FROM {tableName}{Environment.NewLine}{Environment.NewLine}" : "") +
-                            (chkTran.Checked ? "ROLLBACK TRAN test" : "");
+            sqlOutput = (chkTran.Checked ? $"BEGIN TRAN test{Environment.NewLine}{Environment.NewLine}" : "") +
+                        (chkDrop.Checked ? $"IF(OBJECT_ID('TEMPDB..{tableName}', 'U') IS NOT NULL) DROP TABLE {tableName}{ Environment.NewLine}" : "") +
+                        CreateTable(tableName) +
+                        Environment.NewLine + Environment.NewLine +
+                        sqlOutput +
+                        Environment.NewLine + Environment.NewLine +
+                        (chkSelect.Checked ? $"SELECT * FROM {tableName}{Environment.NewLine}{Environment.NewLine}" : "") +
+                        (chkTran.Checked ? "ROLLBACK TRAN test" : "");
 
             txtOutput.Text = sqlOutput;
         }
@@ -196,7 +196,7 @@ namespace ExcelToSQLTable
 
         private void btnCopia_Click(object sender, EventArgs e)
         {
-            if(txtOutput.Text.Trim() != "")
+            if (txtOutput.Text.Trim() != "")
                 Clipboard.SetText(txtOutput.Text);
         }
 
@@ -247,7 +247,7 @@ namespace ExcelToSQLTable
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            for (var i = 0; i <= checkedListBox1.Items.Count-1; i++)
+            for (var i = 0; i <= checkedListBox1.Items.Count - 1; i++)
             {
                 checkedListBox1.SetItemChecked(i, true);
             }
@@ -255,8 +255,14 @@ namespace ExcelToSQLTable
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-                workbook?.Close(false);
-                excel?.Quit();
+            workbook?.Close(false);
+            excel?.Quit();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+            form2.Show();
         }
     }
 }
