@@ -155,7 +155,7 @@ namespace ExcelToSQLTable
 
                     if (i < dataTable.Columns.Count - 1)
                     {
-                        rowValues += "','";
+                        rowValues += "',N'";
                     }
                 }
                 var sqlQuery = $"INSERT INTO {tableName} VALUES ('{rowValues}'){Environment.NewLine}";
