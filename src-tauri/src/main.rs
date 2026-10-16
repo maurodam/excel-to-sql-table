@@ -14,10 +14,14 @@ async fn generate_sql(
     table: sql::Table,
     name: String,
     transaction: bool,
+    include_select: bool,
+    drop_existing: bool,
 ) -> Result<String, String> {
-    tauri::async_runtime::spawn_blocking(move || sql::generate(&table, &name, transaction))
-        .await
-        .map_err(|e| e.to_string())?
+    tauri::async_runtime::spawn_blocking(move || {
+        sql::generate(&table, &name, transaction, include_select, drop_existing)
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
 
 fn main() {

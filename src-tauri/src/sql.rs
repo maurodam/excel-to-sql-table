@@ -16,7 +16,13 @@ fn identifier(value: &str) -> Result<String, String> {
     Ok(format!("[{}]", value.replace(']', "]]")))
 }
 
-pub fn generate(table: &Table, name: &str, transaction: bool) -> Result<String, String> {
+pub fn generate(
+    table: &Table,
+    name: &str,
+    transaction: bool,
+    include_select: bool,
+    drop_existing: bool,
+) -> Result<String, String> {
     if table.headers.is_empty() {
         return Err("Nessuna colonna da convertire.".into());
     }
@@ -28,6 +34,12 @@ pub fn generate(table: &Table, name: &str, transaction: bool) -> Result<String, 
     if name.starts_with('#') && name.encode_utf16().count() > 116 {
         return Err("Nome tabella temporanea: massimo 116 caratteri.".into());
     }
+    let lookup = if name.starts_with('#') {
+        format!("tempdb..{}", identifier(name)?)
+    } else {
+        identifier(name)?
+    }
+    .replace('\'', "''");
     let name = identifier(name)?;
     let mut seen = HashSet::new();
     let columns: Vec<String> = table
@@ -44,6 +56,13 @@ pub fn generate(table: &Table, name: &str, transaction: bool) -> Result<String, 
     if transaction {
         output.push_str("BEGIN TRANSACTION;\n\n");
     }
+    if drop_existing {
+        writeln!(
+            output,
+            "IF OBJECT_ID(N'{lookup}', N'U') IS NOT NULL DROP TABLE {name};\nGO\n"
+        )
+        .unwrap();
+    }
     writeln!(
         output,
         "CREATE TABLE {name} (\n  {}\n);\n",
@@ -54,6 +73,9 @@ pub fn generate(table: &Table, name: &str, transaction: bool) -> Result<String, 
             .join(",\n  ")
     )
     .unwrap();
+    if drop_existing {
+        output.push_str("GO\n\n");
+    }
     for row in &table.rows {
         if row.len() != columns.len() {
             return Err("Numero celle diverso dal numero colonne.".into());
@@ -73,6 +95,9 @@ pub fn generate(table: &Table, name: &str, transaction: bool) -> Result<String, 
         )
         .unwrap();
     }
+    if include_select {
+        writeln!(output, "\nSELECT * FROM {name};").unwrap();
+    }
     if transaction {
         output.push_str("\nROLLBACK TRANSACTION;\n");
     }
@@ -88,7 +113,7 @@ mod tests {
             headers: vec!["a]b".into(), "vuoto".into(), "nullo".into()],
             rows: vec![vec![Some("  l'雪  ".into()), Some("".into()), None]],
         };
-        let sql = generate(&table, "#t]; DROP TABLE x;--", true).unwrap();
+        let sql = generate(&table, "#t]; DROP TABLE x;--", true, false, false).unwrap();
         assert!(sql.contains("[#t]]; DROP TABLE x;--]"));
         assert!(sql.contains("[a]]b]"));
         assert!(sql.contains("N'  l''雪  ', N'', NULL"));
@@ -100,12 +125,12 @@ mod tests {
             headers: vec!["A".into(), "a".into()],
             rows: vec![],
         };
-        assert!(generate(&table, "", false).is_err());
+        assert!(generate(&table, "", false, false, false).is_err());
         table.headers = vec!["".into()];
-        assert!(generate(&table, "", false).is_err());
+        assert!(generate(&table, "", false, false, false).is_err());
         table.headers = vec!["ok".into()];
         table.rows = vec![vec![]];
-        assert!(generate(&table, "", false).is_err());
+        assert!(generate(&table, "", false, false, false).is_err());
     }
     #[test]
     fn defaults_to_temp_without_transaction() {
@@ -113,9 +138,65 @@ mod tests {
             headers: vec!["id".into()],
             rows: vec![],
         };
-        let sql = generate(&table, " ", false).unwrap();
+        let sql = generate(&table, " ", false, false, false).unwrap();
         assert!(sql.starts_with("CREATE TABLE [#temp]"));
         assert!(!sql.contains("TRANSACTION"));
         assert!(!sql.contains("INSERT"));
+    }
+    #[test]
+    fn optional_statements_follow_execution_order() {
+        let table = Table {
+            headers: vec!["id".into()],
+            rows: vec![vec![Some("1".into())]],
+        };
+        for transaction in [false, true] {
+            for include_select in [false, true] {
+                for drop_existing in [false, true] {
+                    let sql = generate(&table, "#temp", transaction, include_select, drop_existing)
+                        .unwrap();
+                    assert_eq!(sql.contains("BEGIN TRANSACTION"), transaction);
+                    assert_eq!(sql.contains("ROLLBACK TRANSACTION"), transaction);
+                    assert_eq!(sql.contains("SELECT * FROM [#temp];"), include_select);
+                    assert_eq!(sql.contains("DROP TABLE"), drop_existing);
+                    let create = sql.find("CREATE TABLE").unwrap();
+                    let insert = sql.find("INSERT INTO").unwrap();
+                    assert!(create < insert);
+                    if drop_existing {
+                        assert!(sql.find("DROP TABLE").unwrap() < create);
+                        assert!(sql.contains("OBJECT_ID(N'tempdb..[#temp]', N'U')"));
+                        assert!(sql[..create].contains("\nGO\n"));
+                        assert!(sql[create..insert].contains("\nGO\n"));
+                    }
+                    if include_select {
+                        assert!(insert < sql.find("SELECT *").unwrap());
+                        if transaction {
+                            assert!(sql.find("SELECT *").unwrap() < sql.find("ROLLBACK").unwrap());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #[test]
+    fn drop_checks_current_database_for_permanent_tables_and_escapes_names() {
+        let table = Table {
+            headers: vec!["id".into()],
+            rows: vec![],
+        };
+        let sql = generate(&table, "L'anno]", false, true, true).unwrap();
+        assert!(sql.contains("OBJECT_ID(N'[L''anno]]]', N'U')"));
+        assert!(sql.contains("DROP TABLE [L'anno]]];"));
+        assert!(!sql.contains("tempdb"));
+        assert!(generate(
+            &Table {
+                headers: vec![],
+                rows: vec![]
+            },
+            "#temp",
+            false,
+            true,
+            true
+        )
+        .is_err());
     }
 }

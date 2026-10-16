@@ -83,6 +83,8 @@ pub fn read(path: &str) -> Result<Workbook, String> {
                 },
                 "#temp",
                 false,
+                false,
+                false,
             )
             .map_err(|e| format!("Foglio {name}: {e}"))?;
         }
@@ -123,6 +125,8 @@ mod tests {
             },
             "",
             true,
+            false,
+            false,
         )
         .unwrap();
         assert_eq!(sql.matches("INSERT INTO").count(), 2);

@@ -7,7 +7,7 @@ mockIPC((command, args) => {
   if(command==='import_workbook') return structuredClone(workbook);
   if(command==='generate_sql') {
     if(args.table.rows.length!==101) throw 'UI smoke: righe perse nella paginazione';
-    if(args.table.headers.length!==2) throw 'UI smoke: colonne perse';
+    if(!args.table.headers.length || args.table.rows.some(row=>row.length!==args.table.headers.length)) throw 'UI smoke: selezione colonne incoerente';
     return '-- UI smoke: payload IPC (generazione SQL verificata nei test Rust)\n'+JSON.stringify(args,null,2);
   }
   if(command==='plugin:clipboard-manager|write_text') {
