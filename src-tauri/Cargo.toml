@@ -1,0 +1,14 @@
+[package]
+name = "excel-to-sql-table"
+version = "1.0.0"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-clipboard-manager = "2"
+calamine = { version = "0.36", features = ["dates"] }
+serde = { version = "1", features = ["derive"] }

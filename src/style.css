@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@layer base {
+  body { @apply m-0 bg-slate-50 font-sans text-slate-800 antialiased; }
+  button { @apply cursor-pointer transition-colors disabled:cursor-not-allowed disabled:opacity-40; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { @apply outline-2 outline-offset-2 outline-teal-600; }
+  th { @apply sticky top-0 z-10 border-b border-slate-200 bg-slate-100 px-3 py-3 font-semibold text-slate-600; }
+  td { @apply border-b border-r border-slate-100 px-3 py-2; }
+  tbody tr { @apply hover:bg-teal-50/50; }
+  td:first-child { @apply bg-slate-50 text-slate-400; }
+  td input, th input { @apply w-full min-w-32 rounded border border-transparent bg-transparent px-1 py-1 focus:border-teal-500 focus:bg-white; }
+  td input::placeholder { @apply italic text-slate-400; }
+}
+@layer components {
+  .primary { @apply inline-flex items-center justify-center gap-5 rounded-lg bg-teal-800 px-5 py-3 text-sm font-medium text-white hover:bg-teal-900; }
+  .secondary { @apply rounded border border-slate-200 bg-white px-2 py-1 text-sm hover:bg-slate-100; }
+  .panel { @apply overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm; }
+}

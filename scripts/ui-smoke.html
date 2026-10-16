@@ -1,0 +1,20 @@
+<!doctype html><html lang="it"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UI smoke · IPC simulato</title><div id="app"></div><script type="module">
+import { mockIPC } from '@tauri-apps/api/mocks';
+window.isTauri = true;
+const workbook = {sheets:[{name:'Dati',headers:['Nome','Totale'],rows:Array.from({length:101},(_,i)=>[i===0?"  L'雪  ":`Riga ${i+1}`,i===0?null:String(i)]),warnings:[]},{name:'Vuoto',headers:[],rows:[],warnings:[]}]};
+mockIPC((command, args) => {
+  if(command==='plugin:dialog|open') return '/fixture/sample.xlsx';
+  if(command==='import_workbook') return structuredClone(workbook);
+  if(command==='generate_sql') {
+    if(args.table.rows.length!==101) throw 'UI smoke: righe perse nella paginazione';
+    if(args.table.headers.length!==2) throw 'UI smoke: colonne perse';
+    return '-- UI smoke: payload IPC (generazione SQL verificata nei test Rust)\n'+JSON.stringify(args,null,2);
+  }
+  if(command==='plugin:clipboard-manager|write_text') {
+    if(!args.text.includes('UI smoke')) throw 'UI smoke: appunti errati';
+    return;
+  }
+  throw `Comando inatteso: ${command}`;
+});
+await import('/src/main.ts');
+</script></html>
